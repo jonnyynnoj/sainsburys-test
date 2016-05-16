@@ -21,7 +21,8 @@ composer install
 app/console products:scrape
 
 options:
-  --url  Manually set product category url
+  --pretty  Pretty print json output
+  --url     Manually set product category url
 ```
 
 ## Run Tests

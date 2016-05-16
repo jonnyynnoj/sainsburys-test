@@ -33,7 +33,8 @@ class FetchProductsCommand extends Command
     {
         $this->setName('products:scrape')
             ->setDescription('Return sainsburys products as JSON')
-            ->addOption('url', null, InputOption::VALUE_REQUIRED);
+            ->addOption('url', null, InputOption::VALUE_REQUIRED)
+            ->addOption('pretty', null, InputOption::VALUE_NONE);
     }
 
     /**
@@ -51,6 +52,14 @@ class FetchProductsCommand extends Command
             $this->categoryScraper->setUrl($url);
         }
 
+        // default json_encode flag
+        $outputFlags = JSON_UNESCAPED_SLASHES;
+
+        // pretty print if option set
+        if ($input->getOption('pretty')) {
+            $outputFlags |= JSON_PRETTY_PRINT;
+        }
+
         try {
             $productScrapers = $this->categoryScraper->fetch();
 
@@ -59,7 +68,7 @@ class FetchProductsCommand extends Command
             }, $productScrapers);
 
             $results = new ProductsCollection($products);
-            $output->writeln(json_encode($results));
+            $output->writeln(json_encode($results, $outputFlags));
         }
         catch (UnexpectedResponseException $e) {
             $output->writeln('Unexpected response: ' . $e->getMessage());
