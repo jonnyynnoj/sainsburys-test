@@ -1,6 +1,5 @@
 <?php
 
-use GuzzleHttp\Psr7\Response;
 use jonnyynnoj\Sainsburys\Exceptions\UnexpectedResponseException;
 use jonnyynnoj\Sainsburys\Factories\ProductScraperFactory;
 use jonnyynnoj\Sainsburys\Scrapers\CategoryScraper;
@@ -11,8 +10,8 @@ class CategoryScraperTest extends ResponseTest
     public static function setUpBeforeClass()
     {
         self::mockClient([
-            new Response(200, [], self::makeResponse('categoryScraper', 'expected')),
-            new Response(200, [], self::makeResponse('categoryScraper', 'unexpected')),
+            self::makeResponse('categoryScraper', 'expected'),
+            self::makeResponse('categoryScraper', 'unexpected'),
         ]);
     }
 
@@ -23,11 +22,8 @@ class CategoryScraperTest extends ResponseTest
         $categoryScraper = new CategoryScraper(self::$goutte, $productServiceFactory);
         $products = $categoryScraper->fetch();
 
-        $this->assertEquals(count($products), 7);
-
-        foreach ($products as $product) {
-            $this->assertInstanceOf(ProductScraper::class, $product);
-        }
+        $this->assertCount(7, $products);
+        $this->assertContainsOnlyInstancesOf(ProductScraper::class, $products);
     }
 
     /**

@@ -3,6 +3,7 @@
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Response;
 use Goutte\Client as Goutte;
 
 abstract class ResponseTest extends PHPUnit_Framework_TestCase
@@ -20,6 +21,9 @@ abstract class ResponseTest extends PHPUnit_Framework_TestCase
 
     protected static function makeResponse($scraper, $type)
     {
-        return fopen(__DIR__ . '/mocks/responses/' . $scraper . '/' . $type . '.html', 'r');
+        $contents = file_get_contents(__DIR__ . '/mocks/responses/' . $scraper . '/' . $type . '.html', 'r');
+        $headers = ['Content-Length' => strlen($contents)];
+
+        return new Response(200, $headers, $contents);
     }
 }
